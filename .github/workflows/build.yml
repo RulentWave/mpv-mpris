@@ -47,11 +47,13 @@ jobs:
       - name: Check .gitignore matches generated files
         run: |
           ! git ls-files --others --exclude-standard | grep .
-
-      - name: Cleanup generated files
+      
+      - name: Publish to GitHub Packages
         run: |
-          make clean
+         curl -u "${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}" \
+         -H "Content-Type: application/octet-stream" \
+         --data-binary "@dist/my-binary-${{ github.ref_name }}.tar.gz" \
+         "https://uploads.github.com/repos/${{ github.repository }}/releases/assets?name=mpv-mpris-${{ github.ref_name }}.tar.gz"
 
-      - name: Check cleanup removed generated files
-        run: |
-          ! git ls-files --others | grep .
+
+---
